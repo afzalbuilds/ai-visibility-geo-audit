@@ -1,0 +1,17 @@
+{
+  "name": "imzlab-ai-visibility",
+  "owner": {
+    "name": "Imzlab Technologies",
+    "email": "info@imzlab.com"
+  },
+  "description": "Imzlab Technologies plugins for Claude: AI visibility tracking and GEO audits.",
+  "plugins": [
+    {
+      "name": "ai-visibility-geo-audit",
+      "source": "./",
+      "description": "AI Visibility Tracker & GEO Audit: brand mentions, rank and citations in ChatGPT, Gemini, Perplexity and Claude, Google AI Overview checks and page audits, inside Claude. Pay per check on Apify.",
+      "category": "productivity",
+      "tags": ["ai visibility", "geo", "aeo", "brand monitoring", "ai search", "seo", "content audit", "marketing"]
+    }
+  ]
+}

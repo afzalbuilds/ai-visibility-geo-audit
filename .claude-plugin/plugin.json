@@ -1,0 +1,35 @@
+{
+  "name": "ai-visibility-geo-audit",
+  "displayName": "AI Visibility Tracker & GEO Audit",
+  "version": "1.0.0",
+  "description": "See whether ChatGPT, Gemini, Perplexity and Claude mention and cite your brand, how you rank against competitors, which Google searches show an AI Overview, and what to fix on your pages to get cited. Pay per check on your Apify account.",
+  "author": {
+    "name": "Imzlab Technologies",
+    "email": "info@imzlab.com",
+    "url": "https://imzlab.com"
+  },
+  "homepage": "https://github.com/afzalbuilds/ai-visibility-geo-audit#readme",
+  "repository": "https://github.com/afzalbuilds/ai-visibility-geo-audit",
+  "license": "MIT",
+  "keywords": [
+    "ai visibility",
+    "generative engine optimization",
+    "geo",
+    "aeo",
+    "ai search",
+    "brand monitoring",
+    "chatgpt mentions",
+    "perplexity citations",
+    "ai overview",
+    "share of voice",
+    "llms.txt",
+    "content audit",
+    "seo",
+    "marketing",
+    "apify"
+  ],
+  "documentationUrl": "https://github.com/afzalbuilds/ai-visibility-geo-audit#readme",
+  "supportUrl": "https://imzlab.com/support#ai-visibility",
+  "privacyPolicyUrl": "https://imzlab.com/privacy#ai-visibility",
+  "icon": "./assets/icon.png"
+}

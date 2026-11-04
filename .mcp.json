@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ai-visibility": {
+      "type": "http",
+      "url": "https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor"
+    }
+  }
+}
