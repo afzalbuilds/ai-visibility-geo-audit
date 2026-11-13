@@ -5,7 +5,7 @@ description: Find which Google searches show an AI Overview, what it says and wh
 
 # Google AI Overview and Reddit buyer-intent check
 
-Two Actors on the **ai-visibility** connector cover this: `muhammadafzal--google-ai-overviews-scraper` (one row per Google query) and `muhammadafzal--reddit-buyer-intent-brand-monitor` (one row per Reddit post). Read `../ai-visibility-check/references/actor-contracts.md` for their exact input and output before the first call in a conversation.
+Two Actors on the **ai-visibility** MCP server (some apps call it a connector) cover this: `muhammadafzal--google-ai-overviews-scraper` (one row per Google query) and `muhammadafzal--reddit-buyer-intent-brand-monitor` (one row per Reddit post). Depending on the app, a tool name may carry a server prefix, use underscores in place of hyphens, or be shortened with a suffix, so match on the start of the slug. Read `../ai-visibility-check/references/actor-contracts.md` for their exact input and output before the first call in a conversation.
 
 Why they belong together: AI Overviews and AI answer engines cite the same kind of sources, and Reddit threads are among the most cited. Knowing which searches show an Overview, which domains it cites, and where buyers ask for recommendations tells the user where to earn a mention.
 
@@ -36,7 +36,7 @@ Why they belong together: AI Overviews and AI answer engines cite the same kind 
 1. Summary line: N queries, X show an AI Overview, Y do not, Z blocked, W failed, country and language.
 2. Table: Query, AI Overview (yes / no / blocked), Cited domains (first 3), Brand cited (yes when any source domain is the user's), First line of the Overview (shortened).
 3. Source leaderboard: domains counted across all Overviews, most cited first, with the user's domain highlighted or "not cited anywhere" stated.
-4. One line: "Apify cost: about USD X for N queries, billed to your Apify account."
+4. One line: "Apify cost: about USD X for N queries, billed to your Apify account." Work it out from the price table in the contract file, never from usage or cost fields in a run response.
 
 **Reddit**:
 1. Summary line: posts returned, relevant posts, posts that mention the brand, subreddits seen.
@@ -48,6 +48,6 @@ Do not paste raw JSON. Quote Overview text and post text in short excerpts only.
 
 ## When things go wrong
 
-- Authorization error or connector not connected: ask the user to connect Apify on the plugin's Connectors tab, then retry.
+- Authorization error or the ai-visibility server is not connected: ask the user to sign in to Apify (a free account works) for the ai-visibility server in their app's connector or MCP settings, then retry. In Claude this is the plugin's Connectors tab.
 - Most Google rows are blocked: Google is challenging automated requests at the moment; report the queries that did return, say the blocked ones were charged at USD 0.005 each, and suggest retrying in an hour or splitting into smaller runs.
 - Reddit returns few relevant posts: widen `timeframe` to `year`, drop the subreddit filter, or rewrite the phrases in the words buyers use; `sort: "new"` returns unrelated recent posts, so never use it for intent listening.

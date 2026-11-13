@@ -5,7 +5,7 @@ description: Check and track whether AI answer engines mention, rank and cite a 
 
 # AI visibility check
 
-You measure brand visibility in AI answers by running Imzlab Technologies' Actors on Apify through the **ai-visibility** connector. Each Actor is a tool on that connector whose name ends with the Actor slug, for example `muhammadafzal--ai-visibility-rank-tracker`. The connector also exposes `get-actor-run`, `get-dataset-items` and `get-key-value-store-record`, which you need to collect results.
+You measure brand visibility in AI answers by running Imzlab Technologies' Actors on Apify through the **ai-visibility** MCP server (some apps call it a connector). Each Actor is a tool on that server whose name contains the Actor slug, for example `muhammadafzal--ai-visibility-rank-tracker`; depending on the app, the tool name may carry a server prefix, use underscores in place of hyphens, or be shortened with a suffix, so match on the start of the slug. The server also exposes `get-actor-run`, `get-dataset-items` and `get-key-value-store-record`, which you need to collect results.
 
 Read `references/actor-contracts.md` for the exact input and output of every Actor before your first call in a conversation, and `references/prompt-set-design.md` for how to build the prompt set.
 
@@ -46,14 +46,14 @@ Default to **Quick look** when the user asks a yes/no question or has given only
 2. A per-engine table: Engine, Checks, Mentioned, Mention rate, Avg position, Cited (Full).
 3. A per-prompt table: Prompt (shortened), then one column per engine showing `position` (or "no" when not mentioned, "err" when failed), and the competitors that appeared.
 4. (Full) Citation leaderboard: top 10 `top_cited_domains` with count and share, with the brand's own domain highlighted, then the `citation_gap_domains` as "sites to get featured on".
-5. One line: "Apify cost: about USD X for N checks in M runs, billed to your Apify account."
+5. One line: "Apify cost: about USD X for N checks in M runs, billed to your Apify account." Work it out from the price table in `references/actor-contracts.md` (runs × start fee + charged results × per-result price). Never quote the usage or cost figures that a run response carries: they are Apify's internal platform usage, not what the run is billed at.
 6. Three short observations and the next step, grounded in the numbers (for example "mentioned in 60 percent of answers but cited in 10 percent, so engines learn about you from third-party pages; audit your own pages next").
 
 Keep the engines' own wording when you quote `mention_context`. Do not paste raw JSON. Give `checked_at` as the run date.
 
 ## When things go wrong
 
-- The connector is not connected or a tool call returns an authorization error: tell the user to open the plugin's Connectors tab and connect Apify (a free account works), then retry.
+- The ai-visibility server is not connected or a tool call returns an authorization error: tell the user to sign in to Apify (a free account works) for the ai-visibility server in their app's connector or MCP settings, then retry. In Claude this is the plugin's Connectors tab.
 - `SUMMARY.stop_reason` is set or many rows carry the same `error`: the Actor's AI access route refused requests; report the completed checks, say the rest were not charged, and offer to retry later.
 - The run reports a charge limit: the user's Apify maximum charge per run was hit; report which prompts were skipped and suggest raising the limit in Apify Console or fewer engines.
 - Only 20 rows came back from a larger request: the user's Apify account is on the free plan, which caps these Actors at 20 results per run; say so and split into runs of 20 or suggest a paid plan.

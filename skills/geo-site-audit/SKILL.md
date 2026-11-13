@@ -5,7 +5,7 @@ description: Audit web pages and sites for AI answerability and AI crawler readi
 
 # GEO site audit
 
-You audit pages with two Actors on the **ai-visibility** connector (tool names `muhammadafzal--geo-content-auditor` and `muhammadafzal--ai-readiness-auditor`), then merge their findings into one fix list. Read `../ai-visibility-check/references/actor-contracts.md` for the exact input and output of both before the first call in a conversation.
+You audit pages with two Actors on the **ai-visibility** MCP server, which some apps call a connector (tool names `muhammadafzal--geo-content-auditor` and `muhammadafzal--ai-readiness-auditor`; an app may add a server prefix, use underscores in place of hyphens, or shorten them with a suffix, so match on the start of the slug), then merge their findings into one fix list. Read `../ai-visibility-check/references/actor-contracts.md` for the exact input and output of both before the first call in a conversation.
 
 | Actor | Looks at | Produces |
 |---|---|---|
@@ -44,14 +44,14 @@ Run both for a full audit. Run only the readiness auditor when the question is t
 3. Per-page table: URL (shortened), Content score and grade, Readiness score and grade, Words, Top issue.
 4. The fix list, numbered, highest impact first, at most 10 items, each 1 to 3 sentences. Mark the three quick wins.
 5. For a single-page audit, add the suggested Q&A pairs as a ready-to-paste FAQ draft and the five sub-scores with their maximums.
-6. One line: "Apify cost: about USD X for N page audits in M runs, billed to your Apify account."
+6. One line: "Apify cost: about USD X for N page audits in M runs, billed to your Apify account." Work it out from the price table in the contract file, never from usage or cost fields in a run response.
 7. Offer next steps: re-audit after the fixes (scores move a few points between runs, so look for 10 or more), run the `ai-visibility-check` skill to see whether citations follow, or `ai-overview-check` for Google.
 
 Do not paste raw JSON. Quote the page's own title when naming a page. Do not present the content auditor's score as a measurement of real AI citations; it is a rubric judgment.
 
 ## When things go wrong
 
-- Authorization error or connector not connected: ask the user to connect Apify on the plugin's Connectors tab, then retry.
+- Authorization error or the ai-visibility server is not connected: ask the user to sign in to Apify (a free account works) for the ai-visibility server in their app's connector or MCP settings, then retry. In Claude this is the plugin's Connectors tab.
 - Readiness `OUTPUT.outcome` is `blocked` or warnings say `robots-blocked`: the site's robots.txt disallows generic crawlers or the server refused the request; report it as a finding in itself (AI crawlers will see the same) and audit the content with the content auditor only if the page is reachable.
 - A page is JavaScript-rendered and `wordCount` is tiny: say the auditor reads the server HTML only, and that AI crawlers mostly do the same, which is itself a finding.
 - Very long page: the content auditor scores the first 3,000 characters and 30 headings; say so when a long page scores low on facts.

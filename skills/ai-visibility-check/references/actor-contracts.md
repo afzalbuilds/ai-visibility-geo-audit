@@ -2,7 +2,7 @@
 
 Verified against live runs on 2026-11-04 (all seven Actors ran once with a one-item input; every dataset row and run record below was read from those runs). Prices are Apify Store pay-per-event prices on the FREE tier on 2026-11-04; paid Apify plans pay 2.5 to 20 percent less. Only results written to the dataset are charged, plus one start event per started GB of run memory.
 
-All Actors belong to Apify user `muhammadafzal`. On the connector, the tool name is the Actor ID with `/` replaced by `--`, for example `muhammadafzal--ai-citation-monitor`. Each tool returns the run (`runId`, `status`, `storages.datasets.default.id`, `storages.keyValueStores.default.id`), not the rows. If a tool response already includes dataset items, use them; otherwise fetch them with `get-dataset-items`.
+All Actors belong to Apify user `muhammadafzal`. On the ai-visibility MCP server, the tool name is the Actor ID with `/` replaced by `--`, for example `muhammadafzal--ai-citation-monitor`. Some apps add a server prefix, turn hyphens into underscores, or shorten a long name and add a suffix; match on the start of the Actor slug. Each tool returns the run (`runId`, `status`, `storages.datasets.default.id`, `storages.keyValueStores.default.id`), not the rows. If a tool response already includes dataset items, use them; otherwise fetch them with `get-dataset-items`.
 
 Run options (`memory`, `timeout`, `maxTotalChargeUsd`) go in the tool's `callOptions`, never inside `input`.
 
@@ -13,6 +13,7 @@ Run options (`memory`, `timeout`, `maxTotalChargeUsd`) go in the tool's `callOpt
 - The four engines are always spelled `perplexity`, `chatgpt`, `claude`, `gemini` (lowercase) in input and in dataset rows.
 - AI answers change between runs and days. Report one run as a snapshot and only call something a trend after two or more runs with the same `trackingId` and the same prompt list.
 - A row whose `error` field is filled was not charged. Count it as "check failed", never as "not mentioned".
+- Always compute a cost from the prices in this file. A run response can include usage or cost fields (for example `usageTotalUsd`); those are Apify's internal platform usage and are far lower than the billed price, so never report them as the cost.
 
 ---
 

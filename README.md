@@ -2,7 +2,7 @@
 
 See how your brand shows up in AI answers without leaving Claude. Give it a brand and a category, and the plugin tells you whether **ChatGPT, Gemini, Perplexity and Claude** mention you, where you rank against competitors, which sources they cite instead of you, which Google searches show an AI Overview, and what to fix on your pages so the engines can cite them. This is generative engine optimization (GEO, also called AEO) with real engine answers, not estimates.
 
-It works in Claude chat, in Cowork and in Claude Code. You need no accounts with the AI engines; the model usage is included in each check's price. Checks run as pay-per-event Apify Actors on your own Apify account, and you only pay for checks that complete.
+It works in Claude chat, in Cowork and in Claude Code, and the same repository also installs in Grok Build, Grok Bot, Cursor and Hermes Agent (see [Other AI agents](#other-ai-agents-grok-and-hermes)). You need no accounts with the AI engines; the model usage is included in each check's price. Checks run as pay-per-event Apify Actors on your own Apify account, and you only pay for checks that complete.
 
 ## What you can ask
 
@@ -39,9 +39,66 @@ Engines checked: Perplexity, ChatGPT, Claude and Gemini, each through a fixed mo
 
 In Claude Code, `/mcp` shows the connection state, and `/ai-visibility-geo-audit:ai-visibility <brand> <category> <competitors>`, `/ai-visibility-geo-audit:geo-audit <url>` and `/ai-visibility-geo-audit:aio-check <search terms>` run the checks directly.
 
+## Other AI agents: Grok and Hermes
+
+The skills and the ai-visibility server are the same on every platform; only the manifest each app reads differs. All of them sign you in to Apify in the browser, and checks are billed to your own Apify account exactly as in Claude.
+
+| App | Reads | What loads |
+|---|---|---|
+| Claude (chat, Cowork, Claude Code) | `.claude-plugin/plugin.json`, `.mcp.json` | skills, commands, geo-report-writer agent, ai-visibility server |
+| Grok Build | `.grok-plugin/plugin.json`, `.mcp.json` | skills, commands, geo-report-writer agent, ai-visibility server |
+| Cursor, and Grok Bot through the same plugin format | `.cursor-plugin/plugin.json`, `mcp.json` | skills, commands, geo-report-writer agent, ai-visibility server |
+| Hermes Agent | `plugin.json`, `mcp.json` (Agent Plugins v1) | skills and ai-visibility server |
+
+### Grok Build
+
+```bash
+grok plugin install afzalbuilds/ai-visibility-geo-audit
+```
+
+Grok asks you to confirm that you trust the plugin; its ai-visibility server stays off until you do. Then open `/mcps`, select **ai-visibility** and press `i` to sign in to Apify. Ask Grok about your brand.
+
+### Grok Bot and Cursor
+
+The plugin is not listed in their marketplaces yet. Once it is, add it from the marketplace and sign in to Apify when the ai-visibility server asks.
+
+On grok.com you can use the Actors today without the skills: open Connectors, add a custom connector and paste the server URL below.
+
+### Hermes Agent
+
+Needs Hermes 0.21.6 or newer, which loads Agent Plugins packages (a root `plugin.json`).
+
+```bash
+hermes plugins install afzalbuilds/ai-visibility-geo-audit --no-enable
+```
+
+```bash
+hermes plugins enable ai-visibility-geo-audit
+```
+
+The package declares the ai-visibility server, but Hermes signs in to a remote server only when your own configuration asks for it. Register the server under the same name with browser sign-in, so Hermes uses your Apify account for it. Run this in a terminal, not from a script, because Hermes starts the sign-in only when it can talk to you:
+
+```bash
+hermes mcp add ai-visibility --auth oauth --url "https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor"
+```
+
+Hermes opens Apify's consent page in your browser. After you allow access it lists the server's tools (the seven Actors plus the run, dataset and record tools); press Enter to enable them all. `hermes mcp test ai-visibility` confirms the connection, and `hermes mcp login ai-visibility` signs in again later if the access is ever revoked.
+
+Every check is a paid Actor run on your Apify account, so the package marks the server `untrusted`: Hermes asks before each call and refuses them in unattended runs. Your own server entry replaces the package's entry, including that setting; add `trust: untrusted` under `mcp_servers.ai-visibility` in `~/.hermes/config.yaml` to keep the prompts.
+
+To install only one skill instead of the whole package: `hermes skills install afzalbuilds/ai-visibility-geo-audit/skills/ai-visibility-check`. The ai-visibility server still has to be added as above.
+
+### Server URL
+
+Any MCP client can use the Actors directly by adding this URL as a remote (streamable HTTP) server with OAuth:
+
+```
+https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor
+```
+
 ## Pricing
 
-The plugin itself is free. Each check is billed by Apify on your account at the Actor's pay-per-event price. Prices below are the Apify Store prices on the FREE tier as of 2026-11-04; paid Apify plans get a discount of up to 20 percent, and failed checks are never charged.
+The plugin itself is free. Each check is billed by Apify on your account at the Actor's pay-per-event price. Prices below are the Apify Store prices on the FREE tier as of 2026-11-13; paid Apify plans get a discount of up to 20 percent, and failed checks are never charged.
 
 | Actor | Per result | Per run start | Example |
 |---|---|---|---|
@@ -85,11 +142,13 @@ A standard report (rank tracker plus citation monitor, 10 prompts on four engine
 - **geo-site-audit**: content answerability and AI crawler readiness audits merged into one fix list.
 - **ai-overview-check**: Google AI Overview triggers and sources, plus Reddit buyer-intent listening.
 - **ai-visibility-cost-estimate**: estimate the Apify cost before running.
-- **/ai-visibility-geo-audit:ai-visibility**, **/ai-visibility-geo-audit:geo-audit** and **/ai-visibility-geo-audit:aio-check** commands (Cowork and Claude Code).
-- **geo-report-writer** agent (Cowork and Claude Code): runs a saved prompt set and writes a dated report with changes.
+- **/ai-visibility-geo-audit:ai-visibility**, **/ai-visibility-geo-audit:geo-audit** and **/ai-visibility-geo-audit:aio-check** commands (Cowork, Claude Code, Grok Build).
+- **geo-report-writer** agent (Cowork, Claude Code, Grok Build): runs a saved prompt set and writes a dated report with changes.
+
+Hermes Agent loads the skills and the ai-visibility server; it has no equivalent for the commands and the geo-report-writer agent, so ask for a dated report in plain words there.
 
 ## Source and support
 
 Source: https://github.com/afzalbuilds/ai-visibility-geo-audit. Issues and feature requests: https://github.com/afzalbuilds/ai-visibility-geo-audit/issues. The Actors are published on Apify Store by Imzlab Technologies under the `muhammadafzal` account.
 
-Last verified: 2026-11-04.
+Last verified: 2026-11-13. Checked with the plugin validators of Claude Code, Grok Build and Hermes Agent 0.23.1.
