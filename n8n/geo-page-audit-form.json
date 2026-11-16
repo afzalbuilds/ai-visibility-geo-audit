@@ -1,0 +1,185 @@
+{
+  "name": "Audit a web page for AI answerability (GEO) from a form",
+  "nodes": [
+    {
+      "id": "01c53ed4-8f73-46bf-af4b-3ebda1d4fc59",
+      "name": "Receive page to audit",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        96
+      ],
+      "parameters": {
+        "formTitle": "GEO content audit",
+        "formDescription": "Scores how well one page can be used in AI answers (0 to 100) and lists what to fix. The audit takes up to a minute.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Page URL",
+              "fieldType": "text",
+              "placeholder": "https://example.com/pricing",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Brand name",
+              "fieldType": "text",
+              "placeholder": "e.g. Example",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Target question",
+              "fieldType": "text",
+              "placeholder": "Optional: a question this page should answer",
+              "requiredField": false
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "buttonLabel": "Audit page"
+        }
+      },
+      "webhookId": "2ddbd4b9-0f1c-4937-9443-aea4a58bb1a8"
+    },
+    {
+      "id": "6d0772a1-97e7-4c04-8f20-dd2da139baf6",
+      "name": "Audit page for AI answerability",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 2,
+      "position": [
+        224,
+        96
+      ],
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Run actor and get dataset",
+        "actorSource": "store",
+        "actorId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "muhammadafzal~geo-content-auditor"
+        },
+        "actorInputMode": "json",
+        "customBody": "={{ JSON.stringify({ startUrls: [{ url: $json[\"Page URL\"].trim() }], brandName: $json[\"Brand name\"].trim(), targetPrompts: $json[\"Target question\"] ? [$json[\"Target question\"].trim()] : [], maxPages: 1 }) }}",
+        "timeout": 600,
+        "memory": 512,
+        "maxTotalChargeUsd": 0.2,
+        "authentication": "apifyApi"
+      },
+      "notes": "Runs the Apify Actor muhammadafzal/geo-content-auditor on the one URL from the form. About USD 0.05 per audited page; a page that fails to load is not charged. The node always outputs an item so the next node can route a failed audit.",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "3de1a366-57f3-4133-b60c-0168c72e3623",
+      "name": "Audit succeeded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ai_answerability_score != null }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "c734795b-9401-46de-878e-52d2ca42ffb7",
+      "name": "Show audit report",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "showText",
+        "responseText": "=<div style=\"font-family: sans-serif; max-width: 720px; margin: 32px auto; padding: 0 16px; line-height: 1.5;\"><h1>AI answerability: {{ $json.ai_answerability_score }} / 100 (grade {{ $json.grade }})</h1><p><a href=\"{{ $json.url }}\">{{ $json.page_title || $json.url }}</a></p><h2>Sub-scores</h2><ul><li>Structure: {{ $json.structure_score }} / 30</li><li>Facts: {{ $json.facts_score }} / 25</li><li>Entity: {{ $json.entity_score }} / 20</li><li>Readability: {{ $json.readability_score }} / 15</li><li>Authority: {{ $json.authority_score }} / 10</li>{{ $json.prompt_fit_score != null ? \"<li>Fit to your target question: \" + $json.prompt_fit_score + \" / 100</li>\" : \"\" }}</ul><h2>Quick wins</h2><ol>{{ ($json.quick_wins || []).map(w => \"<li>\" + w + \"</li>\").join(\"\") || \"<li>None reported</li>\" }}</ol><h2>Issues, most important first</h2><ol>{{ ($json.issues || []).map(w => \"<li>\" + w + \"</li>\").join(\"\") || \"<li>None reported</li>\" }}</ol><h2>Missing schema types</h2><p>{{ ($json.missing_schema_types || []).join(\", \") || \"None\" }}</p><h2>Questions this page could answer</h2><ul>{{ ($json.suggested_qa_pairs || []).map(q => \"<li><b>\" + q.question + \"</b><br>\" + q.answer_hint + \"</li>\").join(\"\") || \"<li>None suggested</li>\" }}</ul><p style=\"color: #666;\">Scores are rubric judgments by a model and can move a few points between runs. The audit reads the opening of the page, so very long pages are scored on their first section.</p></div>"
+      },
+      "webhookId": "6a9b199b-8a35-4164-8e80-7d0dc2232c2c"
+    },
+    {
+      "id": "b3a501a6-f2de-4cff-adf0-321fc35c40c3",
+      "name": "Show audit-failed message",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "text",
+        "completionTitle": "The page could not be audited",
+        "completionMessage": "={{ $(\"Receive page to audit\").item.json[\"Page URL\"] }} did not load or could not be scored{{ $json.error ? \" (\" + ($json.error.message || $json.error) + \")\" : \"\" }}. Check that the URL is public and starts with https://, then try again. Failed audits are not charged."
+      },
+      "webhookId": "26066159-d189-40e6-bad3-03616caa5806"
+    }
+  ],
+  "connections": {
+    "Receive page to audit": {
+      "main": [
+        [
+          {
+            "node": "Audit page for AI answerability",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit page for AI answerability": {
+      "main": [
+        [
+          {
+            "node": "Audit succeeded?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit succeeded?": {
+      "main": [
+        [
+          {
+            "node": "Show audit report",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Show audit-failed message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

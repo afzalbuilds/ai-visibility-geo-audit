@@ -1,0 +1,264 @@
+{
+  "name": "Track brand visibility in ChatGPT, Claude, Gemini and Perplexity weekly",
+  "nodes": [
+    {
+      "id": "d3673839-a1f5-458e-9b94-60e4b34f5a51",
+      "name": "Run every Monday",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        96
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "6c51d41b-fb1e-4ab9-afac-9afb9b1369c1",
+      "name": "Check brand visibility in AI answers",
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 2,
+      "position": [
+        224,
+        96
+      ],
+      "parameters": {
+        "resource": "Actors",
+        "operation": "Run actor and get dataset",
+        "actorSource": "store",
+        "actorId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "muhammadafzal~ai-visibility-rank-tracker"
+        },
+        "actorInputMode": "json",
+        "customBody": "{\n  \"brandName\": \"Notion\",\n  \"brandDomain\": \"notion.so\",\n  \"industry\": \"productivity software\",\n  \"prompts\": [\n    \"What is the best note-taking app for teams?\",\n    \"Which tools are best for a company wiki?\",\n    \"What are the best alternatives to Evernote?\",\n    \"Which project management tools work well for startups?\",\n    \"What is the best app for meeting notes?\"\n  ],\n  \"platforms\": [\"perplexity\", \"chatgpt\", \"claude\", \"gemini\"],\n  \"competitors\": [\"Evernote\", \"Obsidian\", \"Coda\"],\n  \"extractCitations\": false,\n  \"analyzeSentiment\": false,\n  \"trackingId\": \"notion-productivity\",\n  \"useWebSearch\": true,\n  \"webSearchResults\": 3,\n  \"maxPrompts\": 5\n}",
+        "timeout": 3600,
+        "memory": 512,
+        "maxTotalChargeUsd": 3,
+        "authentication": "apifyApi"
+      },
+      "notes": "Runs the Apify Actor muhammadafzal/ai-visibility-rank-tracker. Edit brandName, brandDomain, prompts and competitors in the JSON input. Keep trackingId and the prompt list unchanged between runs so gained and lost mentions can be compared. About USD 0.06 per prompt per engine: 5 prompts on 4 engines is about USD 1.21 per run."
+    },
+    {
+      "id": "0ca7b927-2802-40fe-a64d-b9be923de11e",
+      "name": "Log check to history sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "authentication": "oAuth2",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "",
+          "cachedResultName": "AI visibility history"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Checks"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Checked at": "={{ $json.checked_at }}",
+            "Brand": "={{ $json.brand }}",
+            "Engine": "={{ $json.engine }}",
+            "Prompt": "={{ $json.prompt }}",
+            "Mentioned": "={{ $json.error ? \"check failed\" : ($json.mentioned ? \"yes\" : \"no\") }}",
+            "Position": "={{ $json.position ?? \"\" }}",
+            "Share of voice": "={{ $json.share_of_voice ?? \"\" }}",
+            "Change": "={{ $json.visibility_status || \"\" }}",
+            "Competitors mentioned": "={{ ($json.competitors_mentioned || []).join(\", \") }}",
+            "Context": "={{ $json.mention_context || \"\" }}"
+          },
+          "schema": [
+            {
+              "id": "Checked at",
+              "displayName": "Checked at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Brand",
+              "displayName": "Brand",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Engine",
+              "displayName": "Engine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prompt",
+              "displayName": "Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mentioned",
+              "displayName": "Mentioned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Position",
+              "displayName": "Position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Share of voice",
+              "displayName": "Share of voice",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Change",
+              "displayName": "Change",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Competitors mentioned",
+              "displayName": "Competitors mentioned",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Context",
+              "displayName": "Context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c548b9fc-25f2-4714-9c6f-5204791123c8",
+      "name": "Email weekly visibility summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        192
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "<__PLACEHOLDER_VALUE__Email address that receives the weekly summary__>",
+        "subject": "=AI visibility: {{ $input.first().json.brand }} mentioned in {{ $input.all().filter(i => !i.json.error && i.json.mentioned).length }} of {{ $input.all().filter(i => !i.json.error).length }} checks",
+        "emailType": "html",
+        "message": "=<p><b>{{ $input.first().json.brand }}</b> was mentioned in {{ $input.all().filter(i => !i.json.error && i.json.mentioned).length }} of {{ $input.all().filter(i => !i.json.error).length }} successful checks this week ({{ $input.all().filter(i => i.json.error).length }} checks failed).</p><p><b>By engine</b></p><ul>{{ [\"perplexity\", \"chatgpt\", \"claude\", \"gemini\"].map(e => { const r = $input.all().filter(i => i.json.engine === e && !i.json.error); return r.length ? \"<li>\" + e + \": \" + r.filter(i => i.json.mentioned).length + \" of \" + r.length + \"</li>\" : \"\"; }).join(\"\") }}</ul><p><b>Changes since the last run</b></p><ul>{{ $input.all().filter(i => [\"gained\", \"lost\", \"improved\", \"declined\"].includes(i.json.visibility_status)).map(i => \"<li>\" + i.json.visibility_status + \" on \" + i.json.engine + \": \" + i.json.prompt + \"</li>\").join(\"\") || \"<li>No changes, or this is the first run</li>\" }}</ul><p>AI answers vary between runs. Treat one week as a snapshot and look for a trend over several weeks in the history sheet.</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "notes": "Runs once for the whole run and builds the summary from every check. Checks with an error are counted as failed, never as not mentioned.",
+      "executeOnce": true,
+      "webhookId": "a01ca1cb-e5b3-49cf-8656-e001dbd56bd5"
+    },
+    {
+      "id": "8ea57f1e-bafb-40dd-8d09-1038151fb094",
+      "name": "Sticky Note f3c4ec89",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        0
+      ],
+      "parameters": {
+        "content": "### Edit your brand\nSet brand, prompts and competitors in this node.",
+        "color": 7,
+        "width": 160,
+        "height": 224
+      }
+    }
+  ],
+  "connections": {
+    "Run every Monday": {
+      "main": [
+        [
+          {
+            "node": "Check brand visibility in AI answers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check brand visibility in AI answers": {
+      "main": [
+        [
+          {
+            "node": "Log check to history sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email weekly visibility summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

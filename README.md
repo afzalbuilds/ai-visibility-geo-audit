@@ -96,6 +96,10 @@ Any MCP client can use the Actors directly by adding this URL as a remote (strea
 https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor
 ```
 
+## n8n workflow templates
+
+Two ready-made n8n workflows use the same Actors: a weekly AI visibility tracker with a Google Sheets history and email summary, and a form that audits one page for AI answerability. Import the JSON files from the [n8n folder](n8n/README.md); they need the Apify node for n8n and your own Apify account.
+
 ## Pricing
 
 The plugin itself is free. Each check is billed by Apify on your account at the Actor's pay-per-event price. Prices below are the Apify Store prices on the FREE tier as of 2026-11-13; paid Apify plans get a discount of up to 20 percent, and failed checks are never charged.
