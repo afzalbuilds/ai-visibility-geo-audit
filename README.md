@@ -2,7 +2,7 @@
 
 See how your brand shows up in AI answers without leaving Claude. Give it a brand and a category, and the plugin tells you whether **ChatGPT, Gemini, Perplexity and Claude** mention you, where you rank against competitors, which sources they cite instead of you, which Google searches show an AI Overview, and what to fix on your pages so the engines can cite them. This is generative engine optimization (GEO, also called AEO) with real engine answers, not estimates.
 
-It works in Claude chat, in Cowork and in Claude Code, and the same repository also installs in Grok Build, Grok Bot, Cursor and Hermes Agent (see [Other AI agents](#other-ai-agents-grok-and-hermes)). You need no accounts with the AI engines; the model usage is included in each check's price. Checks run as pay-per-event Apify Actors on your own Apify account, and you only pay for checks that complete.
+It works in Claude chat, in Cowork and in Claude Code, and the same repository also installs as a native plugin in OpenAI Codex, Gemini CLI, GitHub Copilot, Grok, Cursor, Hermes Agent and OpenCode, with the skills usable in many more agents (see [Other AI agents](#other-ai-agents-codex-gemini-cli-copilot-and-more)). You need no accounts with the AI engines; the model usage is included in each check's price. Checks run as pay-per-event Apify Actors on your own Apify account, and you only pay for checks that complete.
 
 ## What you can ask
 
@@ -39,16 +39,66 @@ Engines checked: Perplexity, ChatGPT, Claude and Gemini, each through a fixed mo
 
 In Claude Code, `/mcp` shows the connection state, and `/ai-visibility-geo-audit:ai-visibility <brand> <category> <competitors>`, `/ai-visibility-geo-audit:geo-audit <url>` and `/ai-visibility-geo-audit:aio-check <search terms>` run the checks directly.
 
-## Other AI agents: Grok and Hermes
+## Other AI agents: Codex, Gemini CLI, Copilot and more
 
-The skills and the ai-visibility server are the same on every platform; only the manifest each app reads differs. All of them sign you in to Apify in the browser, and checks are billed to your own Apify account exactly as in Claude.
+The skills and the **ai-visibility** server are the same in every app; only the manifest each app reads differs. Every app signs you in to Apify in the browser, and checks are billed to your own Apify account exactly as in Claude.
 
-| App | Reads | What loads |
+| App | Install | What loads |
 |---|---|---|
-| Claude (chat, Cowork, Claude Code) | `.claude-plugin/plugin.json`, `.mcp.json` | skills, commands, geo-report-writer agent, ai-visibility server |
-| Grok Build | `.grok-plugin/plugin.json`, `.mcp.json` | skills, commands, geo-report-writer agent, ai-visibility server |
-| Cursor, and Grok Bot through the same plugin format | `.cursor-plugin/plugin.json`, `mcp.json` | skills, commands, geo-report-writer agent, ai-visibility server |
-| Hermes Agent | `plugin.json`, `mcp.json` (Agent Plugins v1) | skills and ai-visibility server |
+| Claude (chat, Cowork, Claude Code) | [How to set it up](#how-to-set-it-up) | skills, commands, geo-report-writer agent, ai-visibility server |
+| OpenAI Codex (CLI and app) | [OpenAI Codex](#openai-codex) | skills, ai-visibility server |
+| Gemini CLI (and Qwen Code) | [Gemini CLI](#gemini-cli) | skills, commands, geo-report-writer subagent, ai-visibility server |
+| GitHub Copilot CLI and VS Code | [GitHub Copilot](#github-copilot-cli-and-vs-code) | skills, commands, geo-report-writer agent, ai-visibility server |
+| Grok Build | [Grok Build](#grok-build) | skills, commands, geo-report-writer agent, ai-visibility server |
+| Cursor and Grok Bot | [Grok Bot and Cursor](#grok-bot-and-cursor) | skills, commands, geo-report-writer agent, ai-visibility server |
+| Hermes Agent | [Hermes Agent](#hermes-agent) | skills, ai-visibility server |
+| OpenCode | [OpenCode](#opencode) | skills, commands, geo-report-writer subagent, ai-visibility server |
+| Antigravity, Kiro, Devin, Factory Droid, Augment, Junie, Mistral Vibe | [More agents](#more-agents) | skills and ai-visibility server, plus commands and agent where the app supports them |
+| Any other agent with skills support | [More agents](#more-agents) | skills, plus the server URL added by hand |
+
+Checked on 2026-11-16: the plugin installs, and its skills and server load, in Codex 0.167, Gemini CLI 0.68.0, GitHub Copilot CLI 1.0.112 and OpenCode 1.18.27, and it passes the plugin validators of Claude Code, Gemini CLI, Grok Build and Hermes Agent. Apify sign-in and a live check were not repeated in those apps. The apps under [More agents](#more-agents) follow each app's published plugin format but were not installed.
+
+### OpenAI Codex
+
+Needs Codex CLI 0.142 or newer (`codex update`). The Codex app uses the same settings, so the plugin appears there too.
+
+```bash
+codex plugin marketplace add afzalbuilds/ai-visibility-geo-audit
+```
+
+```bash
+codex plugin add ai-visibility-geo-audit@imzlab-ai-visibility
+```
+
+```bash
+codex mcp login ai-visibility
+```
+
+The last command opens Apify's sign-in page in your browser. Ask Codex about your brand. You can also call a skill by name, for example `$ai-visibility-check`. Codex loads the skills and the ai-visibility server, but not the plugin's commands or the geo-report-writer agent, so ask for a dated report in plain words there.
+
+### Gemini CLI
+
+```bash
+gemini extensions install https://github.com/afzalbuilds/ai-visibility-geo-audit
+```
+
+When Gemini CLI first connects to the ai-visibility server it opens Apify's sign-in page in your browser; if it does not, run `/mcp auth ai-visibility` inside Gemini CLI. The extension adds the skills, the `/ai-visibility`, `/geo-audit` and `/aio-check` commands and the geo-report-writer subagent. Update it later with `gemini extensions update ai-visibility-geo-audit`.
+
+Qwen Code installs the same extension: `qwen extensions install afzalbuilds/ai-visibility-geo-audit`.
+
+### GitHub Copilot CLI and VS Code
+
+```bash
+copilot plugin marketplace add afzalbuilds/ai-visibility-geo-audit
+```
+
+```bash
+copilot plugin install ai-visibility-geo-audit@imzlab-ai-visibility
+```
+
+In a Copilot CLI session, run `/mcp auth ai-visibility` to sign in to Apify. The plugin adds the skills, the `/ai-visibility`, `/geo-audit` and `/aio-check` commands, the geo-report-writer agent and the ai-visibility server.
+
+In VS Code, turn on the `chat.plugins.enabled` setting, run **Chat: Install Plugin from Source** from the Command Palette and enter `afzalbuilds/ai-visibility-geo-audit`.
 
 ### Grok Build
 
@@ -87,6 +137,37 @@ Hermes opens Apify's consent page in your browser. After you allow access it lis
 Every check is a paid Actor run on your Apify account, so the package marks the server `untrusted`: Hermes asks before each call and refuses them in unattended runs. Your own server entry replaces the package's entry, including that setting; add `trust: untrusted` under `mcp_servers.ai-visibility` in `~/.hermes/config.yaml` to keep the prompts.
 
 To install only one skill instead of the whole package: `hermes skills install afzalbuilds/ai-visibility-geo-audit/skills/ai-visibility-check`. The ai-visibility server still has to be added as above.
+
+### OpenCode
+
+OpenCode has no plugin bundle, so the skills, the server and the extras are added separately:
+
+```bash
+npx skills add afzalbuilds/ai-visibility-geo-audit -a opencode -g
+```
+
+```bash
+opencode mcp add ai-visibility --url "https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor"
+```
+
+```bash
+opencode mcp auth ai-visibility
+```
+
+For the `/ai-visibility`, `/geo-audit` and `/aio-check` commands and the geo-report-writer subagent, copy the `opencode/commands` and `opencode/agents` folders of this repository into `~/.config/opencode/`.
+
+### More agents
+
+| App | How to install |
+|---|---|
+| Google Antigravity | `agy plugin install https://github.com/afzalbuilds/ai-visibility-geo-audit` |
+| Kiro | Powers panel, **Add Custom Power**, **Import power from GitHub**, then `https://github.com/afzalbuilds/ai-visibility-geo-audit` |
+| Devin (formerly Windsurf) | `devin plugins install afzalbuilds/ai-visibility-geo-audit` |
+| Factory Droid | `droid plugin marketplace add afzalbuilds/ai-visibility-geo-audit`, then `droid plugin install ai-visibility-geo-audit@imzlab-ai-visibility --scope user` |
+| Augment (Auggie CLI) | `auggie plugin marketplace add afzalbuilds/ai-visibility-geo-audit`, then enable the plugin in `/plugins` |
+| JetBrains Junie CLI | `/extensions marketplace add afzalbuilds/ai-visibility-geo-audit`, then `/extensions install ai-visibility-geo-audit` |
+| Mistral Vibe | clone this repository into `~/.vibe/plugins/ai-visibility-geo-audit`, run `/reload-plugins`, then `/mcp login ai-visibility` |
+| Cline, Kilo Code, Amp, Goose and other agents that read Agent Skills | `npx skills add afzalbuilds/ai-visibility-geo-audit` installs the skills; then add the server URL below as a remote MCP server with OAuth in that app |
 
 ### Server URL
 
@@ -146,13 +227,13 @@ A standard report (rank tracker plus citation monitor, 10 prompts on four engine
 - **geo-site-audit**: content answerability and AI crawler readiness audits merged into one fix list.
 - **ai-overview-check**: Google AI Overview triggers and sources, plus Reddit buyer-intent listening.
 - **ai-visibility-cost-estimate**: estimate the Apify cost before running.
-- **/ai-visibility-geo-audit:ai-visibility**, **/ai-visibility-geo-audit:geo-audit** and **/ai-visibility-geo-audit:aio-check** commands (Cowork, Claude Code, Grok Build).
-- **geo-report-writer** agent (Cowork, Claude Code, Grok Build): runs a saved prompt set and writes a dated report with changes.
+- **/ai-visibility-geo-audit:ai-visibility**, **/ai-visibility-geo-audit:geo-audit** and **/ai-visibility-geo-audit:aio-check** commands (Claude Code, Cowork, Gemini CLI, Copilot, Grok Build, OpenCode).
+- **geo-report-writer** agent (Claude Code, Cowork, Gemini CLI, Copilot, Grok Build, OpenCode): runs a saved prompt set and writes a dated report with changes.
 
-Hermes Agent loads the skills and the ai-visibility server; it has no equivalent for the commands and the geo-report-writer agent, so ask for a dated report in plain words there.
+Codex and Hermes Agent load the skills and the ai-visibility server only; there, ask for a dated report in plain words. In Codex the skills can also be called by name, for example `$ai-visibility-check`.
 
 ## Source and support
 
 Source: https://github.com/afzalbuilds/ai-visibility-geo-audit. Issues and feature requests: https://github.com/afzalbuilds/ai-visibility-geo-audit/issues. The Actors are published on Apify Store by Imzlab Technologies under the `muhammadafzal` account.
 
-Last verified: 2026-11-13. Checked with the plugin validators of Claude Code, Grok Build and Hermes Agent 0.23.1.
+Last verified: 2026-11-16. Checked with the plugin validators of Claude Code, Gemini CLI, Grok Build and Hermes Agent 0.23.1; install and loading checked in Codex 0.167, Gemini CLI 0.68.0, GitHub Copilot CLI 1.0.112 and OpenCode 1.18.27.

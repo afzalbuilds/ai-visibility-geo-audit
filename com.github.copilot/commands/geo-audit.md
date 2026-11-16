@@ -1,0 +1,8 @@
+---
+description: "Audit a page or site for AI answerability and AI crawler readiness, with a prioritized fix list"
+argument-hint: "<url or domain> [more urls...]"
+---
+
+Run a GEO site audit using the `geo-site-audit` skill from this plugin for: $ARGUMENTS
+
+If the argument is a bare domain or a homepage, audit the site (readiness auditor with link depth 1 and up to 10 pages, then the content auditor on the pages that matter for AI answers). If specific URLs were given, audit exactly those with both auditors. Show the estimated Apify cost first and wait for confirmation above USD 0.50, run both Actors through the ai-visibility MCP server, wait for every run to finish, read the datasets plus the SUMMARY and OUTPUT records, reconcile every URL, and present the site signals, the per-page table, the numbered fix list with quick wins marked, and the Apify cost line. If no URL was given, ask for one.

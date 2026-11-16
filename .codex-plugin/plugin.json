@@ -1,0 +1,53 @@
+{
+  "name": "ai-visibility-geo-audit",
+  "version": "1.2.0",
+  "description": "See whether ChatGPT, Gemini, Perplexity and Claude mention and cite your brand, how you rank against competitors, which Google searches show an AI Overview, and what to fix on your pages to get cited. Pay per check on your Apify account.",
+  "author": {
+    "name": "Imzlab Technologies",
+    "email": "info@imzlab.com",
+    "url": "https://imzlab.com"
+  },
+  "homepage": "https://github.com/afzalbuilds/ai-visibility-geo-audit#readme",
+  "repository": "https://github.com/afzalbuilds/ai-visibility-geo-audit",
+  "license": "MIT",
+  "keywords": [
+    "ai visibility",
+    "generative engine optimization",
+    "geo",
+    "aeo",
+    "ai search",
+    "brand monitoring",
+    "chatgpt mentions",
+    "perplexity citations",
+    "ai overview",
+    "share of voice",
+    "llms.txt",
+    "content audit",
+    "seo",
+    "marketing",
+    "apify"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "AI Visibility & GEO Audit",
+    "shortDescription": "Brand visibility in AI answers",
+    "longDescription": "See whether ChatGPT, Gemini, Perplexity and Claude mention and cite your brand, how you rank against competitors, which Google searches show an AI Overview, and what to fix on your pages to get cited. Pay per check on your Apify account. Includes 4 skills (ai-overview-check, ai-visibility-check, ai-visibility-cost-estimate, geo-site-audit) and Apify's hosted MCP server limited to Imzlab's Actors. After installing, run `codex mcp login ai-visibility` to sign in to Apify in the browser.",
+    "developerName": "Imzlab Technologies",
+    "category": "Data & Analytics",
+    "capabilities": [
+      "Read"
+    ],
+    "defaultPrompt": [
+      "Does ChatGPT mention Notion when people ask about note-taking apps?",
+      "Audit acme.com for AI search. Is ClaudeBot blocked? Do we have llms.txt?",
+      "Which of these searches show a Google AI Overview, and which sources does it cite?"
+    ],
+    "websiteURL": "https://github.com/afzalbuilds/ai-visibility-geo-audit#readme",
+    "privacyPolicyURL": "https://imzlab.com/privacy#ai-visibility",
+    "termsOfServiceURL": "https://imzlab.com/terms#ai-visibility",
+    "brandColor": "#181860",
+    "logo": "./assets/icon.png",
+    "composerIcon": "./assets/icon.png"
+  }
+}

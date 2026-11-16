@@ -1,0 +1,14 @@
+# Generated copy of the Claude plugin file; edit the original in commands/ or agents/ and regenerate.
+interface:
+  display_name: "AI Overview Check"
+  short_description: "Which searches show a Google AI Overview"
+  brand_color: "#181860"
+  default_prompt: "Use $ai-overview-check to see which of these searches show a Google AI Overview."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ai-visibility"
+      description: "Apify's hosted MCP server limited to Imzlab Technologies' Actors (sign in with Apify)"
+      transport: "streamable_http"
+      url: "https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor"

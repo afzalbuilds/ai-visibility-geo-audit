@@ -1,0 +1,14 @@
+# Generated copy of the Claude plugin file; edit the original in commands/ or agents/ and regenerate.
+interface:
+  display_name: "GEO Site Audit"
+  short_description: "AI answerability and crawler readiness fix list"
+  brand_color: "#181860"
+  default_prompt: "Use $geo-site-audit to audit acme.com for AI search and list the fixes."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ai-visibility"
+      description: "Apify's hosted MCP server limited to Imzlab Technologies' Actors (sign in with Apify)"
+      transport: "streamable_http"
+      url: "https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor"

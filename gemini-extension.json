@@ -1,0 +1,15 @@
+{
+  "name": "ai-visibility-geo-audit",
+  "version": "1.2.0",
+  "description": "See whether ChatGPT, Gemini, Perplexity and Claude mention and cite your brand, how you rank against competitors, which Google searches show an AI Overview, and what to fix on your pages to get cited. Pay per check on your Apify account.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "ai-visibility": {
+      "url": "https://mcp.apify.com/?tools=muhammadafzal/ai-visibility-rank-tracker,muhammadafzal/ai-citation-monitor,muhammadafzal/ai-brand-reach-checker,muhammadafzal/geo-content-auditor,muhammadafzal/ai-readiness-auditor,muhammadafzal/google-ai-overviews-scraper,muhammadafzal/reddit-buyer-intent-brand-monitor",
+      "type": "http",
+      "oauth": {
+        "enabled": true
+      }
+    }
+  }
+}

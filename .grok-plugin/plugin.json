@@ -1,6 +1,6 @@
 {
   "name": "ai-visibility-geo-audit",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "See whether ChatGPT, Gemini, Perplexity and Claude mention and cite your brand, how you rank against competitors, which Google searches show an AI Overview, and what to fix on your pages to get cited. Pay per check on your Apify account.",
   "author": {
     "name": "Imzlab Technologies",
